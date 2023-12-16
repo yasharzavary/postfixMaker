@@ -10,4 +10,23 @@ second: variable type, we will convert it and make one chart from that form
 """
 
 class postFix:
-    pass
+    def __init__(self):
+        pass
+
+    def chart(self):
+        pass
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
+
+    def __str__(self):
+        pass
+
+    def __repr__(self):
+        pass
+
+    def __del__(self):
+        pass
