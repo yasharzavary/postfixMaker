@@ -5,14 +5,24 @@ created by: yashar zavary rezaie
 simple num: usual int and float numbers
 complex num: it is sin or other functional numbers
 """
-
+import math
 
 class Post:
     def __init__(self, infixForm):
         self.__infix = infixForm
         self.__postfix = Post.convertPostFix(infixForm)
+        self.__result = Post.calcPosResult(self.__postfix)
 
-
+    @property
+    def postForm(self):
+        """
+        getting post form of the this object
+        :return: post form in string type
+        """
+        return self.__postfix
+    @property
+    def result(self):
+        return self.__result
     @staticmethod
     def convertPostFix(infixform):
         """
@@ -63,20 +73,35 @@ class Post:
         # return the result
         return nums[0]
 
+    @staticmethod
+    def calcPosResult(postForm):
+        # TODO: post checker
+        # TODO: error handling(1: it is variable type or not)
+
+        ops = ['+', '-', '*', '/', '^']
+        complexSolvers = {'sin': math.sin, 'cos': math.cos,
+                          'tan': math.tan, 'log': math.log}
+
+        results = []
+
+        tempStr = postForm.split()
+
+        for com in tempStr:
+            if com[0:3] in complexSolvers.keys():
+                results.append(complexSolvers[com[0:3]](int(Post.calcPosResult(com[4:len(com)-1]))))
+            elif com in ops:
+                results.append(eval(f'{results.pop(-2)} {com} {results.pop()}'))
+            else:
+                results.append(com)
+        return results[0]
 
 
-    @property
-    def postForm(self):
-        """
-        getting post form of the this object
-        :return: post form in string type
-        """
-        return self.__postfix
+
 
     def __str__(self):
         pass
 
     def __repr__(self):
-        pass
+        return self.__postfix
     def __del__(self):
         pass
