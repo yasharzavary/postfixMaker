@@ -13,6 +13,38 @@ class Post:
         self.__postfix = Post.convertPostFix(infixForm)
         self.__result = Post.calcPosResult(self.__postfix)
 
+    def info(self):
+        """
+        it will get us some info about the formula,
+        properties:
+            1.number of numbers(nn)
+            2.number of odd numbers(non)
+            3.number of even numbers(nen)
+            4.result
+            5.post form
+            6.infix form
+            7.number of complex numbers(ncn)
+        :param get:
+        :return:
+        """
+        nn = 0
+        non = 0
+        nen = 0
+        ncn = 0
+        ops = ['+', '-', '*', '/', '^']
+        for item in self.__postfix.split():
+            if item not in ops:
+                try:
+                    if int(item) % 2 == 0:
+                        nen += 1
+                    else:
+                        non += 1
+                    nn += 1
+                except:
+                    ncn += 1
+        return f"nn: {nn}\tnen: {nen}\tnon: {non}\tncn: {ncn}\ninfixForm: {self.__infix}\tpostForm: {self.__postfix}\nresult: {self.__result}"
+
+
     @property
     def postForm(self):
         """
@@ -26,6 +58,7 @@ class Post:
     @staticmethod
     def convertPostFix(infixform):
         # TODO: if it is 2, we have other situations here
+        # TODO: false math formula error must added
         """
         heart of the class! converting function
         :param infixform: infix form that user want to convert it
