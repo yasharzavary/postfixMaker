@@ -25,6 +25,7 @@ class Post:
         return self.__result
     @staticmethod
     def convertPostFix(infixform):
+        # TODO: if it is 2, we have other situations here
         """
         heart of the class! converting function
         :param infixform: infix form that user want to convert it
@@ -95,11 +96,8 @@ class Post:
                 results.append(com)
         return results[0]
 
-
-
-
     def __str__(self):
-        pass
+        return f"post form: {self.__postfix}\nresult: {self.__result}"
 
     def __repr__(self):
         return self.__postfix

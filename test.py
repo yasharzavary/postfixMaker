@@ -33,8 +33,7 @@ import math
 # x = Post('x + x * x / sin(x) - x * x ^ 2x')
 l = '5 + log(8) - 6 + 8'
 x = Post(l)
-print(x.postForm)
-print(x.result)
+print(x)
 # print(eval(l))
 
 # print(math.sin(56))
