@@ -6,6 +6,15 @@ simple num: usual int and float numbers
 complex num: it is sin or other functional numbers
 """
 import math
+from string import ascii_letters
+
+class Ex(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+        self.__mes = message
+    def __str__(self):
+        return f'error: {self.__mes}'
+
 
 class Post:
     def __init__(self, infixForm):
@@ -55,6 +64,33 @@ class Post:
     @property
     def result(self):
         return self.__result
+
+    def drawLine(self, start=0, stop=0):
+        import numpy as np
+        import matplotlib.pyplot as plt
+        def getSol(x):
+            return Post.calcPosResult(self.postForm.replace('x', f'{x}'))
+
+        if 'sqrt' in self.postForm or 'log' in self.postForm:
+            if start == 0 and stop == 0: x = np.linspace(0, 100, 100)
+            elif start == stop or start < stop: raise Ex('start and stop is false')
+            elif start < 0: raise TypeError('you can\'t use negative number in this equation')
+            else: x = np.linspace(start, stop, 100)
+        else:
+            if start == 0 and stop == 0: x = np.linspace(-50, 50, 100)
+            elif start == stop or start < stop: raise Ex('start and stop is false')
+            else: x = np.linspace(start, stop, 100)
+        y = []
+        for num in x:
+            y.append(getSol(num))
+        plt.plot(x, y)
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title('diagram of equation you give')
+        plt.grid()
+        plt.show()
+
+
     @staticmethod
     def convertPostFix(infixform):
         # TODO: if it is 2, we have other situations here
@@ -68,7 +104,7 @@ class Post:
         commands = {')': 0, '+': 1, '-': 1,
                     '/': 2, '*': 2, '^': 3,
                     '(': 4}
-        complexNums = ['sin', 'cos', 'tan', 'log']
+        complexNums = ['sin', 'cos', 'tan', 'log', 'sqrt']
 
         # split the numbers and operators
         infixSplitForm = infixform.split()
@@ -94,7 +130,7 @@ class Post:
                         opList.pop()
                     # otherwise it will add until op list get empty
                     else:
-                        while opList:
+                        while opList and opList[-1] != '(':
                             nums.append(f'{nums.pop(-2)} {nums.pop()} {opList.pop()}')
                         opList.append(com)
             else:
@@ -111,20 +147,22 @@ class Post:
     def calcPosResult(postForm):
         # TODO: post checker
         # TODO: error handling(1: it is variable type or not)
-
+        if isinstance(postForm, Post): postForm = postForm.postForm
+        if 'x' in postForm:return 'variable type equation'
         ops = ['+', '-', '*', '/', '^']
         complexSolvers = {'sin': math.sin, 'cos': math.cos,
-                          'tan': math.tan, 'log': math.log}
+                          'tan': math.tan, 'log': math.log,
+                          'sqrt': math.sqrt}
 
         results = []
 
         tempStr = postForm.split()
-
         for com in tempStr:
-            if com[0:3] in complexSolvers.keys():
-                results.append(complexSolvers[com[0:3]](int(Post.calcPosResult(com[4:len(com)-1]))))
+            if com[0:3] in list(complexSolvers.keys()):results.append(complexSolvers[com[0:3]](float(Post.calcPosResult(com[4:len(com)-1]))))
+            elif com[0:4] in list(complexSolvers.keys()):results.append(complexSolvers[com[0:4]](float(Post.calcPosResult(com[5:len(com)-1]))))
             elif com in ops:
-                results.append(eval(f'{results.pop(-2)} {com} {results.pop()}'))
+                if com == '^':results.append(eval(f'{results.pop(-2)} ** {results.pop()}'))
+                else: results.append(eval(f'{results.pop(-2)} {com} {results.pop()}'))
             else:
                 results.append(com)
         return results[0]
